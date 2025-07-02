@@ -15,6 +15,10 @@ public class Main {
     public static final JFrame frame = new JFrame("Charges");
 
 	public static void main(String[] args) {
+		game();
+	}
+
+	private static void game() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {

@@ -26,7 +26,7 @@ public class Charge {
 
     public Charge(ChargeType type) {
         this.type = type;
-        charge = type.getSign() * ELEMENTAL_CHARGE_MULTIPLE * ELEMENTAL_CHARGE;
+        charge = chargeValue(type);
         mass = CHARGE_MASS;
         trail = new ArrayDeque<>();
         position = velocity = acceleration = netForce = linearMomentum = Vector.NULL;
@@ -67,6 +67,10 @@ public class Charge {
                 charge,
                 type
         );
+    }
+
+    public static double chargeValue(ChargeType type) {
+        return type.getSign() * ELEMENTAL_CHARGE_MULTIPLE * ELEMENTAL_CHARGE;
     }
 
 }

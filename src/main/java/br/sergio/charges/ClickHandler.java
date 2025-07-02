@@ -35,25 +35,28 @@ public class ClickHandler extends MouseAdapter {
                     case MouseEvent.BUTTON3 -> game.setInfoTarget(clickedCharge == game.getInfoTarget() ? null : clickedCharge);
                 }
             } else {
+                ChargeType type = switch (event.getButton()) {
+                    case MouseEvent.BUTTON1 -> ChargeType.POSITIVE;
+                    case MouseEvent.BUTTON2 -> ChargeType.NEUTRAL;
+                    case MouseEvent.BUTTON3 -> ChargeType.NEGATIVE;
+                    default -> null;
+                };
+                if (type == null) {
+                    return;
+                }
                 if (event.isShiftDown()) {
                     boolean resume = !game.getFlags().paused.get();
                     if (resume) {
                         game.setPaused(true);
                     }
-                    CustomCharge customCharge = new CustomCharge(game, x, y, resume);
+                    CustomCharge customCharge = new CustomCharge(game, x, y, resume, Charge.chargeValue(type));
                     customCharge.setVisible(true);
-                    return;
+                } else {
+                    Charge charge = new Charge(type);
+                    charge.setPosition(Utils.fixPosition(game, x, y));
+                    charges.add(charge);
+                    controlPanel.updateChargeAmount();
                 }
-                Charge charge = switch (event.getButton()) {
-                    case MouseEvent.BUTTON1 -> new Charge(ChargeType.PROTON);
-                    case MouseEvent.BUTTON2 -> new Charge(ChargeType.NEUTRON);
-                    case MouseEvent.BUTTON3 -> new Charge(ChargeType.ELECTRON);
-                    default -> null;
-                };
-                if (charge == null) return;
-                charge.setPosition(Utils.fixPosition(game, x, y));
-                charges.add(charge);
-                controlPanel.updateChargeAmount();
             }
         }
     }

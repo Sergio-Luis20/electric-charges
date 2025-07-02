@@ -14,13 +14,15 @@ public class CustomCharge extends JDialog {
     private Game game;
     private double x, y;
     private boolean resume;
+    private double initialCharge;
 
-    public CustomCharge(Game game, double x, double y, boolean resume) {
+    public CustomCharge(Game game, double x, double y, boolean resume, double initialCharge) {
         super(Main.frame, "Carga personalizada", true);
         this.game = game;
         this.x = x;
         this.y = y;
         this.resume = resume;
+        this.initialCharge = initialCharge;
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -95,7 +97,7 @@ public class CustomCharge extends JDialog {
 
         JTextField c = new JTextField();
         c.setMaximumSize(textFieldSize);
-        c.setText(String.valueOf(Charge.ELEMENTAL_CHARGE_MULTIPLE * Charge.ELEMENTAL_CHARGE).replace('.', ',').toLowerCase());
+        c.setText(Utils.formatDouble(initialCharge).replace('.', ',').toLowerCase());
 
         JButton cancel = new JButton("Cancelar");
         cancel.addActionListener(event -> resume(false));

@@ -12,6 +12,7 @@ public class ControlPanel extends JPanel {
     private JLabel chargeAmountLabel;
     private JLabel positiveChargeAmountLabel;
     private JLabel negativeChargeAmountLabel;
+    private JLabel neutralChargeAmountLabel;
 
     private JTextArea chargeInfo;
 
@@ -60,10 +61,12 @@ public class ControlPanel extends JPanel {
         chargeAmountLabel = new JLabel("Total de cargas: 0");
         positiveChargeAmountLabel = new JLabel("Total de cargas positivas: 0");
         negativeChargeAmountLabel = new JLabel("Total de cargas negativas: 0");
+        neutralChargeAmountLabel = new JLabel("Total de cargas neutras: 0");
 
         addJLabel(chargeAmountLabel);
         addJLabel(positiveChargeAmountLabel);
         addJLabel(negativeChargeAmountLabel);
+        addJLabel(neutralChargeAmountLabel);
 
         JButton removeAllCharges = new JButton("Remover todas as cargas");
         removeAllCharges.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -130,9 +133,11 @@ public class ControlPanel extends JPanel {
         List<Charge> charges = game.getCharges();
         chargeAmountLabel.setText("Total de cargas: " + charges.size());
         positiveChargeAmountLabel.setText("Total de cargas positivas: "
-                + charges.stream().filter(c -> c.getType() == ChargeType.PROTON).count());
+                + charges.stream().filter(c -> c.getType() == ChargeType.POSITIVE).count());
         negativeChargeAmountLabel.setText("Total de cargas negativas: "
-                + charges.stream().filter(c -> c.getType() == ChargeType.ELECTRON).count());
+                + charges.stream().filter(c -> c.getType() == ChargeType.NEGATIVE).count());
+        neutralChargeAmountLabel.setText("Total de cargas neutras: "
+                + charges.stream().filter(c -> c.getType() == ChargeType.NEUTRAL).count());
     }
 
     public void showChargeInfo(Charge c) {

@@ -22,6 +22,7 @@ public class Game extends Canvas implements Runnable {
     public static final double METERS_PER_PIXEL = 2.54e-2 / 96;
     public static final double PIXELS_PER_METER = 1 / METERS_PER_PIXEL;
     public static final Color INFO_TARGET_COLOR = new Color(0xffc0ff);
+    public static final Color BACKGROUND_COLOR = new Color(9, 10, 17);
 
     private final Flags flags;
     private final List<Charge> charges;
@@ -165,7 +166,7 @@ public class Game extends Canvas implements Runnable {
             drawTrail(g, charge);
         }
 
-        int glowRadius = CHARGE_RADIUS + 35;
+        int glowDiameter = CHARGE_RADIUS + 35;
         float[] dist = {0, 1};
         Color[] colors = {
                 new Color(color.getRed(), color.getGreen(), color.getBlue(), 120),
@@ -174,7 +175,7 @@ public class Game extends Canvas implements Runnable {
 
         RadialGradientPaint paint = new RadialGradientPaint(
                 new Point2D.Double(pos.x(), pos.y()),
-                glowRadius / 2.0f,
+                glowDiameter / 2.0f,
                 dist,
                 colors,
                 MultipleGradientPaint.CycleMethod.NO_CYCLE
@@ -183,10 +184,10 @@ public class Game extends Canvas implements Runnable {
         Paint originalPaint = g.getPaint();
         g.setPaint(paint);
         g.fillOval(
-                (int) (pos.x() - glowRadius / 2.0),
-                (int) (pos.y() - glowRadius / 2.0),
-                glowRadius,
-                glowRadius
+                (int) (pos.x() - glowDiameter / 2.0),
+                (int) (pos.y() - glowDiameter / 2.0),
+                glowDiameter,
+                glowDiameter
         );
         g.setPaint(originalPaint);
 
@@ -249,13 +250,14 @@ public class Game extends Canvas implements Runnable {
         try {
             g = (Graphics2D) bufferStrategy.getDrawGraphics();
         } catch (Exception e) {
+            log.error("Could not get Graphics2D.", e);
             return;
         }
         try {
             Dimension size = getSize();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g.setColor(new Color(9, 10, 17));
+            g.setColor(BACKGROUND_COLOR);
             g.fillRect(0, 0, size.width, size.height);
             synchronized (charges) {
                 for (Charge charge : charges) {
@@ -265,6 +267,7 @@ public class Game extends Canvas implements Runnable {
         } finally {
             g.dispose();
             bufferStrategy.show();
+            Toolkit.getDefaultToolkit().sync();
         }
     }
 
@@ -306,15 +309,15 @@ public class Game extends Canvas implements Runnable {
     public static class Flags {
 
         public final AtomicBoolean running,
-                                    paused,
-                                    showingPositionVector,
-                                    showingVelocityVector,
-                                    showingAccelerationVector,
-                                    showingNetForceVector,
-                                    showingLinearMomentumVector,
-                                    showingPath,
-                                    electricForce,
-                                    gravitationalForce;
+                                   paused,
+                                   showingPositionVector,
+                                   showingVelocityVector,
+                                   showingAccelerationVector,
+                                   showingNetForceVector,
+                                   showingLinearMomentumVector,
+                                   showingPath,
+                                   electricForce,
+                                   gravitationalForce;
 
         public Flags() {
             running = new AtomicBoolean();

@@ -7,27 +7,27 @@ import java.awt.Color;
 @Getter
 public enum ChargeType {
 
-    ELECTRON(-1, 0xff0000, "-"),
-    PROTON(1, 0x00c0ff, "+"),
-    NEUTRON(0, 0x808080, " ");
+    NEGATIVE(-1, new Color(0xff0000), "-"),
+    POSITIVE(1, new Color(0x00c0ff), "+"),
+    NEUTRAL(0, new Color(0x808080), " ");
 
     private final double sign;
     private final Color color;
     private final String symbol;
 
-    ChargeType(double sign, int color, String symbol) {
+    ChargeType(double sign, Color color, String symbol) {
         this.sign = sign;
-        this.color = new Color(color);
+        this.color = color;
         this.symbol = symbol;
     }
 
     public static ChargeType of(double value) {
         if (value > 0) {
-            return PROTON;
+            return POSITIVE;
         } else if (value < 0) {
-            return ELECTRON;
+            return NEGATIVE;
         } else {
-            return NEUTRON;
+            return NEUTRAL;
         }
     }
 

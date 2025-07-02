@@ -44,8 +44,12 @@ public class RK4Integrator extends Integrator {
     private Derivative evaluate(Charge charge, Vector position, Vector velocity, double deltaTime, Derivative d) {
         Vector newPosition = position.add(d.dPosition.multiplyByScalar(deltaTime));
         Vector newVelocity = velocity.add(d.dVelocity.multiplyByScalar(deltaTime));
-        Vector netForce = computeNetForce(charge, newPosition);
-        Vector acceleration = netForce.multiplyByScalar(1 / charge.getMass());
+        Vector acceleration;
+        if (game.getCharges().size() < 2) {
+            acceleration = charge.getAcceleration();
+        } else {
+            acceleration = computeNetForce(charge, newPosition).multiplyByScalar(1 / charge.getMass());
+        }
         return new Derivative(newVelocity, acceleration);
     }
 
