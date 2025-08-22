@@ -27,6 +27,7 @@ public class Main {
 
 		Game game = new Game();
 		ControlPanel controlPanel = new ControlPanel(game);
+		game.setControlPanel(controlPanel);
 
         game.addMouseListener(new ClickHandler(game, controlPanel));
 

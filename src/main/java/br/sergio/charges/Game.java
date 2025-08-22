@@ -36,6 +36,9 @@ public class Game extends Canvas implements Runnable {
     private double simulatedTime = 0;
     private Integrator integrator;
 
+    @Setter
+    private ControlPanel controlPanel;
+
     public Game() {
         setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         charges = new ArrayList<>();
@@ -83,6 +86,7 @@ public class Game extends Canvas implements Runnable {
                     if (charge == infoTarget) {
                         infoTarget = null;
                     }
+                    controlPanel.updateChargeAmount();
                 }
             }
             integrator.beforeLoop();
