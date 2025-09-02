@@ -44,7 +44,7 @@ public class Game extends Canvas implements Runnable {
         charges = new ArrayList<>();
         runners = new ArrayList<>();
         flags = new Flags();
-        integrator = new RK4Integrator(this);
+        integrator = new RK4Integrator();
     }
 
     public void stop() {
@@ -70,7 +70,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update(double deltaTime) {
-        deltaTime /= 1e9;
+        deltaTime *= 1e-9;
         simulatedTime += deltaTime;
         synchronized (charges) {
             Iterator<Charge> iterator = charges.iterator();
@@ -89,16 +89,14 @@ public class Game extends Canvas implements Runnable {
                     controlPanel.updateChargeAmount();
                 }
             }
-            integrator.beforeLoop();
+            integrator.integrate(this, deltaTime);
             for (Charge charge : charges) {
                 Deque<TrailPoint> trail = charge.getTrail();
                 trail.addLast(new TrailPoint(charge.getPosition(), simulatedTime));
                 while (!trail.isEmpty() && simulatedTime - trail.peekFirst().timestamp() > Charge.TRAIL_LIFE_TIME) {
                     trail.removeFirst();
                 }
-                integrator.integrate(charge, deltaTime);
             }
-            integrator.afterLoop();
         }
     }
 

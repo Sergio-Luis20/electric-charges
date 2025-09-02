@@ -1,34 +1,36 @@
 package br.sergio.charges;
 
-import br.sergio.charges.Game.Flags;
-import lombok.AllArgsConstructor;
-
-import java.awt.Dimension;
-
 import static br.sergio.charges.Game.CHARGE_RADIUS;
 
-@AllArgsConstructor
-public abstract class Integrator {
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
-    protected final Game game;
+import br.sergio.charges.Game.Flags;
 
-    public void beforeLoop() {
-    }
+public interface Integrator {
 
-    public void afterLoop() {
-    }
+    void integrate(Game game, double deltaTime);
 
-    public abstract void integrate(Charge currentCharge, double deltaTime);
-
-    protected Vector computeNetForce(Charge currentCharge, Vector position) {
-        Vector netForce = new Vector();
+    static List<Vector> computeNetForces(Game game) {
+        List<Charge> charges = game.getCharges();
         Flags flags = game.getFlags();
-        if (flags.electricForce.get() || flags.gravitationalForce.get()) {
-            for (Charge otherCharge : game.getCharges()) {
+        List<Vector> netForces = new ArrayList<>(charges.size());
+        if (!flags.electricForce.get() && !flags.gravitationalForce.get()) {
+            int size = charges.size();
+            Vector zero = new Vector();
+            for (int i = 0; i < size; i++) {
+                netForces.add(zero);
+            }
+            return netForces;
+        }
+        for (Charge currentCharge : charges) {
+            Vector netForce = new Vector();
+            for (Charge otherCharge : charges) {
                 if (otherCharge == currentCharge) {
                     continue;
                 }
-                Vector direction = otherCharge.getPosition().subtract(position);
+                Vector direction = otherCharge.getPosition().subtract(currentCharge.getPosition());
                 double distance = direction.magnitude();
                 if (distance < 2 * CHARGE_RADIUS) {
                     continue;
@@ -46,11 +48,12 @@ public abstract class Integrator {
                     netForce = netForce.add(force);
                 }
             }
+            netForces.add(netForce);
         }
-        return netForce;
+        return netForces;
     }
 
-    protected Vector[] takeChargeOutOfTheWall(Vector pos, Vector vel) {
+    static Vector[] takeChargeOutOfTheWall(Game game, Vector pos, Vector vel) {
         Vector correctedPos = pos;
         Vector correctedVel = vel;
 
@@ -84,7 +87,7 @@ public abstract class Integrator {
             correctedVel = new Vector(vel.x(), -vel.y());
         }
 
-        return new Vector[] {correctedPos, correctedVel};
+        return new Vector[]{correctedPos, correctedVel};
     }
 
 }
