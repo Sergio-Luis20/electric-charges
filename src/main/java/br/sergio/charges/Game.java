@@ -19,7 +19,7 @@ public class Game extends Canvas implements Runnable {
 
     public static final int MIN_WIDTH = 800, MIN_HEIGHT = 600;
     public static final int CHARGE_RADIUS = 10;
-    public static final double METERS_PER_PIXEL = 2.54e-2 / 96;
+    public static final double METERS_PER_PIXEL = 2.54e-2 / Toolkit.getDefaultToolkit().getScreenResolution();
     public static final double PIXELS_PER_METER = 1 / METERS_PER_PIXEL;
     public static final Color INFO_TARGET_COLOR = new Color(0xffc0ff);
     public static final Color BACKGROUND_COLOR = new Color(9, 10, 17);
@@ -70,7 +70,6 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update(double deltaTime) {
-        deltaTime *= 1e-9;
         simulatedTime += deltaTime;
         synchronized (charges) {
             Iterator<Charge> iterator = charges.iterator();
@@ -277,6 +276,8 @@ public class Game extends Canvas implements Runnable {
     public void run() {
         flags.running.set(true);
         try {
+            int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+            System.out.println("Iniciando game loop com densidade pixelar de " + dpi + "px/in");
             long startTime, endTime, deltaTime;
             startTime = System.nanoTime();
             long delta = 0;
@@ -294,7 +295,7 @@ public class Game extends Canvas implements Runnable {
                 }
                 synchronized (loopLock) {
                     if (!flags.paused.get()) {
-                        update(deltaTime);
+                        update(deltaTime * 1e-9);
                     }
                     render();
                     synchronized (runners) {
